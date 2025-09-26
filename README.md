@@ -139,12 +139,95 @@ npx tsc --init
 
 1. criar o .gitignore
 2. criar o .env
-3. configurar o tsconfig
-4. configurar o prisma
+3. configurar o tsconfig para remover o que não precisa
+4. configurar o dockerfile para utilizar como banco local
+  a. instalar e inicializar o docker(caso ainda não o tenha)
+  b. criar o arquivo dockerfile, exemplo simples:
+
+    ````yml
+    version: '3.8'
+
+    services:
+      postgres:
+        image: postgres:latest
+        container_name: postgres-app-store
+        environment:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app-store-db
+        ports:
+          - "5432:5432"
+        volumes:
+          - pgdata:/var/lib/postgresql/data
+
+      pgweb:
+        image: sosedoff/pgweb
+        container_name: pgweb
+        ports:
+          - "8081:8081"
+        environment:
+          PGWEB_DATABASE_URL: postgres://admin:postgres@postgres:5432/app-store-db?sslmode=disable
+        depends_on:
+          - postgres
+
+    volumes:
+      pgdata:
+    ````
+  b. criar variavel de banco no .env
+    ````
+      DATABASE_URL="postgresql://admin:postgres@localhost:5432/app-store-db?schema=public"
+    ````
+  c. inicializar o container:
+    ````bash
+      docker-compose up -d
+      docker start postgres-app-store
+    ````
+  d. caso queira visualizar o banco basta executar o comando
+    ````bash
+      docker start pgweb
+    ````
+5. instalação e configuração do prisma
+
+    a. Instalar e inicializar as configurações padrões pelo prisma
+    ````bash
+    npx prisma init
+    npx prisma generate
+    ````
+
+    b. Outra alternativa para instalação
+    - instalar o Prisma Client e a CLI
+    ````bash
+      npm install prisma --save-dev
+      npm install @prisma/client
+    ````
+    - criar a pasta e o arquivo prisma/schema.prisma com o conteúdo básico, exemplo:
+
+    ````js
+    generator client {
+      provider = "prisma-client-js"
+      output = "../src/generated/prisma"
+    }
+
+    datasource db {
+      provider = "postgresql" // ou mysql/sqlite/etc
+      url      = env("DATABASE_URL")
+    }
+    ````
+  Após a instalação do prisma vamos agora para o prisma estabelecer conexão
+  - cirar pasta e arquivo src/libs/prisma.tsx
+  - a conexão pode ser encontrada na documentação disponível no site prisma (https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections)
 
 ## criação das estruturas de pasta
 
 
 ## passos para configuração dos arquivos
-- Configurar o arquivo src/server.ts
-- Configurar o routes > main.ts
+- Criar o arquivo de rotas src/routes/main.ts
+- Configurar o arquivo src/server.ts para receber as rotas
+- Configurar o src/routes/main.ts
+
+
+## passos para rodar o projeto
+
+````bash
+npm run dev
+````

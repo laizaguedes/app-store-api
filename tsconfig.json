@@ -1,44 +1,11 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    // File Layout
-    // "rootDir": "./src",
-    // "outDir": "./dist",
-
-    // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
-    "types": [],
-    // For nodejs:
-    // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
-
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
-    // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
-
-    // Recommended Options
-    "strict": true,
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true,
+    "target": "es5", /* versao do javascript */
+    "module": "commonjs", /* sistema de modulos, forma como o javascript/typescript organiza e compartilha código entre arquivos */
+    "strict": true, /* ativa o modo estrito do typescript, ou seja, várias validações extras de tipo */
+    "esModuleInterop": true, /* permite importar módulos commonJs usando a sintaxe de ESM (import ... from ...) */
+    "skipLibCheck": true, /* faz o compilador ignorar a checagem de tipos nos arquivos .d.ts (arquivos de definição de bibliotecas) */
+    "forceConsistentCasingInFileNames": true /* padroniza letras maiusculas/minusculas em nomes de arquivos, exemplo: ./User.ts e ./user.ts. */
   }
 }
