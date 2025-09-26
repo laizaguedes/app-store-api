@@ -193,7 +193,7 @@ npx tsc --init
 5. instalação e configuração do prisma
 
     a. Instalar e inicializar as configurações padrões pelo prisma
-    
+
       ````bash
       npx prisma init
       npx prisma generate
@@ -225,10 +225,7 @@ npx tsc --init
     - cirar pasta e arquivo src/libs/prisma.tsx
     - a conexão pode ser encontrada na documentação disponível no site prisma (https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections)
 
-## criação das estruturas de pasta
-
-
-## passos para configuração dos arquivos
+## passos para configuração dos arquivos de bibliotecas/recursos
 - Criar o arquivo de rotas src/routes/main.ts
 - Configurar o arquivo src/server.ts para receber as rotas
 - Configurar o src/routes/main.ts
@@ -237,5 +234,6 @@ npx tsc --init
 ## passos para rodar o projeto
 
 ````bash
+npm i
 npm run dev
 ````
