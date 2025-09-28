@@ -8,6 +8,7 @@
 - zod → validação de dados.
 - uuid → gera IDs únicos.
 - stripe → pagamentos online.
+- swagger → documentação da API
 
 🔷 O que é o Prisma?
 É um ORM que facilita a comunicação entre sua aplicação e o banco de dados.
@@ -137,6 +138,10 @@ npm i -D @types/cors @types/express @types/node prisma typescript tsx
 npx tsc --init
 ````
 
+- Criar o arquivo de rotas src/routes/main.ts
+- Configurar o arquivo src/server.ts para receber as rotas
+- Configurar o src/routes/main.ts
+
 1. criar o .gitignore
 2. criar o .env
 3. configurar o tsconfig para remover o que não precisa
@@ -224,16 +229,95 @@ npx tsc --init
     Após a instalação do prisma vamos agora para o prisma estabelecer conexão
     - cirar pasta e arquivo src/libs/prisma.tsx
     - a conexão pode ser encontrada na documentação disponível no site prisma (https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections)
+6. instalar e configurar o ZOD
+7. instalar e configurar o swagger
+    a.instalar o swagger
 
-## passos para configuração dos arquivos de bibliotecas/recursos
-- Criar o arquivo de rotas src/routes/main.ts
-- Configurar o arquivo src/server.ts para receber as rotas
-- Configurar o src/routes/main.ts
+    ````bash
+    npm install zod-to-openapi swagger-ui-express
+    ````
 
+    b. criar e configurar o arquivo src/libs/swagger.ts, exemplo:
+
+    ````ts
+    // swagger.tsx
+    import { OpenApiGeneratorV3 } from 'zod-to-openapi';
+    import {
+      UserCreateSchema,
+      UserResponseSchema,
+      UserUpdateSchema,
+    } from './zod/user';
+
+    const generator = new OpenApiGeneratorV3([
+      UserCreateSchema,
+      UserResponseSchema,
+      UserUpdateSchema,
+    ]);
+
+    const openApiDocument = generator.generateDocument({
+      openapi: '3.0.0',
+      info: {
+        title: 'Minha API',
+        version: '1.0.0',
+      },
+      paths: {
+        '/users': {
+          post: {
+            summary: 'Criar usuário',
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: generator.getSchemaRef(UserCreateSchema),
+                },
+              },
+              required: true,
+            },
+            responses: {
+              '201': {
+                description: 'Usuário criado',
+                content: {
+                  'application/json': {
+                    schema: generator.getSchemaRef(UserResponseSchema),
+                  },
+                },
+              },
+            },
+          }
+        },
+      },
+    });
+    ````
+
+    c. no arquivo src/server.ts onde fica a api, adicionar o swagger da seguinte maneira:
+
+    ````tsx
+    // index.ts
+    import express from 'express';
+    import swaggerUi from 'swagger-ui-express';
+    import openApiDocument from './swagger';
+
+    const app = express();
+    app.use(express.json());
+
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
+
+    app.listen(3000, () => {
+      console.log('🚀 Server running on http://localhost:4000');
+      console.log('📘 Swagger: http://localhost:3000/api-docs');
+    });
+    ````
 
 ## passos para rodar o projeto
 
 ````bash
 npm i
+docker-compose up -d
+docker start postgres-app-store
 npm run dev
+````
+
+## passos para criar o banco de dados com prisma
+
+````bash
+npx prisma migrate dev
 ````
