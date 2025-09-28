@@ -1,4 +1,30 @@
 # app-store
+## Estrutura de pastas
+
+````bash
+app-store-api/
+├── node_modules/          # Dependências instaladas pelo npm, incluindo Express, Prisma, Zod, Stripe etc.
+├── prisma/                # Configurações e migrations do Prisma para gerenciar o banco de dados
+├── public/                # Arquivos estáticos públicos (imagens, scripts, assets) servidos diretamente via Express
+├── src/                   # Código-fonte da aplicação escrito em TypeScript
+│   ├── controllers/       # Camada de controle da API: lógica que recebe requisições e chama serviços (ex: banner.ts, product.ts)
+│   ├── generated/         # Código gerado automaticamente pelo Prisma (client, tipos, etc)
+│   │   └── prisma/
+│   ├── libs/              # Bibliotecas internas e helpers reutilizáveis, como instância configurada do Prisma (prisma.ts)
+│   ├── routes/            # Definição das rotas da API e organização das endpoints (ex: main.ts)
+│   ├── schemas/           # Schemas de validação e definição de contratos com Zod (ex: get-product-schema.ts)
+│   ├── services/          # Regras de negócio e operações mais complexas, separadas da camada de controle (ex: banner.ts, product.ts)
+│   └── utils/             # Funções utilitárias e helpers variados usados ao longo do projeto (ex: get-absolute-image-url.ts, get-base-url.ts)
+│   └── server.ts          # Ponto de entrada da aplicação, onde o servidor Express é configurado e iniciado
+├── .env                   # Variáveis de ambiente (conexão com banco, chaves secretas, etc) — carregadas no runtime
+├── .gitignore             # Define arquivos e pastas que não devem ser versionados (node_modules, .env, etc)
+├── docker-compose.yml     # Configuração para rodar containers Docker, facilitando orquestração e deploy local
+├── package-lock.json      # Lockfile que registra versões exatas das dependências instaladas
+├── package.json           # Manifesto do projeto com scripts, dependências, configurações do npm
+├── README.md              # Documentação geral do projeto
+└── tsconfig.json          # Configuração do compilador TypeScript (target, módulos, paths, etc)
+````
+
 ## Bibliotecas e Recursos
 
 - prisma → facilita a comunicação entre a aplicação e o banco de dados 
