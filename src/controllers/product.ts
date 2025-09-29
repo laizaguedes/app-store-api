@@ -1,19 +1,21 @@
 import { RequestHandler } from "express";
 import { getProductsSchema } from "../schemas/get-product-schema";
 import { get } from "http";
-import { getAllProducts, getProductById, incrementProductViewsCount } from "../services/product";
+import { getAllProducts, getProductById, getProductsFromSameCategory, incrementProductViewsCount } from "../services/product";
 import { getAbsoluteImageUrl } from "../utils/get-absolute-image-url";
 import { getOneProductSchema } from "../schemas/get-one-product-schema";
 import { getCategory } from "../services/category";
+import { getRelatedProductsSchema } from "../schemas/get-related-product.schema";
+import { getRelatedProductsQuerySchema } from "../schemas/get-one-product-query-schema";
 
 export const getProducts: RequestHandler = async (req, resp) => {
     const parseResult = getProductsSchema.safeParse(req.query);
-    if(!parseResult.success) {
+    if (!parseResult.success) {
         return resp.status(400).json({ error: 'Parâmetros inválidos' });
     }
 
     const { metadata, orderBy, limit } = parseResult.data;
-    
+
     const parsedLimit = limit ? parseInt(limit) : undefined;
     const parsedMetadata = metadata ? JSON.parse(metadata) : undefined;
 
@@ -34,7 +36,7 @@ export const getProducts: RequestHandler = async (req, resp) => {
 
 export const getOneProduct: RequestHandler = async (req, resp) => {
     const paramsResult = getOneProductSchema.safeParse(req.params);
-    if(!paramsResult.success) {
+    if (!paramsResult.success) {
         return resp.status(400).json({ error: 'Parâmetros inválidos' });
     }
 
@@ -42,7 +44,7 @@ export const getOneProduct: RequestHandler = async (req, resp) => {
 
     // Getting product by id
     const product = await getProductById(parseInt(id!));
-    if(!product) {
+    if (!product) {
         return resp.status(404).json({ error: 'Produto não encontrado' });
     }
 
@@ -56,10 +58,35 @@ export const getOneProduct: RequestHandler = async (req, resp) => {
 
     // Incrementing product's view count
     await incrementProductViewsCount(product.id);
-    
+
     resp.json({
         error: null,
         product: productWithAbsoluteImageUrl,
         category
     });
+}
+
+export const getRelatedProducts: RequestHandler = async (req, resp) => {
+    const paramsResult = getRelatedProductsSchema.safeParse(req.params);
+    const queryResult = getRelatedProductsQuerySchema.safeParse(req.query);
+
+    if (!paramsResult.success || !queryResult.success) {
+        return resp.status(400).json({ error: 'Parâmetros inválidos' });
+    }
+
+    const { id } = paramsResult.data;
+    const { limit } = queryResult.data;
+
+    const products = await getProductsFromSameCategory(
+        parseInt(id),
+        limit ? parseInt(limit) : undefined
+    );
+
+    const productsWithAbsoluteImageUrl = products.map((product: any) => ({
+        ...product,
+        image: product.image ? getAbsoluteImageUrl(product.image) : null,
+        liked: false // TODO: Once have like functionality, fetch thos.
+    }));
+
+    resp.json({ error: null, products: productsWithAbsoluteImageUrl });
 }

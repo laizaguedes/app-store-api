@@ -100,3 +100,36 @@ export const incrementProductViewsCount = async (id: number) => {
         }
     });
 }
+
+export const getProductsFromSameCategory = async (id: number, limit: number = 4) => {
+    // First, get the product to know its category
+    const product = await prisma.product.findUnique({
+        where: { id },
+        select: { categoryId: true }
+    });
+    if (!product) return [];
+
+    const products = await prisma.product.findMany({
+        where: {
+            categoryId: product.categoryId,
+            id: { not: id } // Exclude the current product
+        },
+        select: {
+            id: true,
+            label: true,
+            price: true,
+            images: {
+                take: 1,
+                orderBy: { id: 'asc' }
+            }
+        },
+        take: limit,// Quantity of related products
+        orderBy: { viewsCount: 'desc' } // Most viewed products
+    });
+
+    return products.map((product: any) => ({
+        ...product,
+        image: product.images[0] ? `media/products/${product.images[0].url}` : null,
+        images: undefined
+    }));
+}
