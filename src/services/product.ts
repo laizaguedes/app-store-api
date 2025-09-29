@@ -70,3 +70,33 @@ export const getAllProducts = async (filters: ProductFilters) => {
         images: undefined
     }));
 }
+
+export const getProductById = async (id: number) => {
+    const product = await prisma.product.findUnique({
+        where: { id },
+        select: {
+            id: true,
+            label: true,
+            price: true,
+            description: true,
+            categoryId: true,
+            images: true
+        }
+    });
+
+    if (!product) return null;
+
+    return {
+        ...product,
+        images: product.images.length > 0 ? product.images.map((img: any) => `media/products/${img.url}`) : []
+    }
+}
+
+export const incrementProductViewsCount = async (id: number) => {
+    await prisma.product.update({
+        where: { id },
+        data: {
+            viewsCount: { increment: 1 }
+        }
+    });
+}
