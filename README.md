@@ -347,3 +347,6 @@ npm run dev
 ````bash
 npx prisma migrate dev
 ````
+
+## url de apoio
+dashboard.stripe.com/test/dashboard

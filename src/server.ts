@@ -5,6 +5,9 @@ import { routes } from './routes/main.js';
 const server = express();
 server.use(cors());
 server.use(express.static('public'));/* liberar a pasta pública como estática */
+
+server.use('/webhook/stripe', express.raw({ type: 'application/json' }));
+
 server.use(express.json());/* liberar o método de entrada e saída de dados */
 
 server.use(routes);/* adicionar as rotas */

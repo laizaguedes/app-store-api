@@ -4,6 +4,9 @@ import * as productController from '../controllers/product';
 import * as categoryController from '../controllers/category';
 import * as cartController from '../controllers/cart';
 import * as userController from '../controllers/user';
+import * as webhookController from '../controllers/webhook';
+import * as orderController from '../controllers/order';
+import { authMiddleware } from "../middleware/auth";
 
 export const routes = Router();
 
@@ -21,3 +24,10 @@ routes.post('/cart/mount', cartController.cartMount);
 routes.get('/cart/shipping', cartController.calculateShipping);
 routes.post('/user/register', userController.register);
 routes.post('/user/login', userController.login);
+routes.post('/user/addresses', authMiddleware/* verifica se está logado */, userController.addAddress);
+routes.get('/user/addresses', authMiddleware, userController.getAddresses);
+routes.post('/cart/finish', authMiddleware, cartController.finish);
+routes.post('/webhook/stripe', webhookController.stripe);
+routes.get('/orders/session', orderController.getOrderBySessionId);
+routes.get('/orders', authMiddleware, orderController.getOrders);
+routes.get('/orders/:id', authMiddleware, orderController.getOrder);
