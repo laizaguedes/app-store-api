@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch --env-file=.env src/server.ts"
+    "dev": "tsx watch --env-file=.env src/server.ts",
+    "db:seed": "prisma db seed",
+    "db:reset": "prisma migrate reset"
   },
   "repository": {
     "type": "git",
@@ -13,6 +15,9 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "bugs": {
     "url": "https://github.com/laizaguedes/app-store/issues"
   },
