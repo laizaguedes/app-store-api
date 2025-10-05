@@ -48,7 +48,7 @@ async function main() {
         prisma.banner.create({
             data: {
                 img: 'banner_promo_1.jpg',
-                link: '/categories/camisas'
+                link: '/categories/camisa'
             }
         }),
         prisma.banner.create({
