@@ -1,16 +1,22 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  //output   = "./src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql" // ou mysql/sqlite/etc
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id        Int           @id @default(autoincrement())
-  name      String        @unique
+  name      String
   email     String        @unique
   password  String
   token     String?
@@ -23,19 +29,16 @@ model User {
 model UserAddress {
   id         Int      @id @default(autoincrement())
   userId     Int
+  zipcode    String
   street     String
   number     String
-  zipCode    String
   city       String
   state      String
   country    String
   complement String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model Banner {
@@ -50,16 +53,16 @@ model Product {
   id          Int               @id @default(autoincrement())
   label       String
   price       Float
-  description String
+  description String?
   categoryId  Int
   viewsCount  Int               @default(0)
   salesCount  Int               @default(0)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @default(now()) @updatedAt
   images      ProductImage[]
-  metadatas   ProductMetadata[]
-  orderProducts OrderProduct[]
-  category    Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  metadata    ProductMetadata[]
+  category    Category?         @relation(fields: [categoryId], references: [id])
+  orders      OrderProduct[]
 }
 
 model ProductImage {
@@ -68,23 +71,17 @@ model ProductImage {
   url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@index([productId])
+  product   Product  @relation(fields: [productId], references: [id])
 }
 
 model ProductMetadata {
   id                 Int      @id @default(autoincrement())
   productId          Int
-  categoryMetadataId Int
+  categoryMetadataId String
   metadataValueId    String
   createdAt          DateTime @default(now())
   updatedAt          DateTime @default(now()) @updatedAt
-
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@index([productId])
+  product            Product  @relation(fields: [productId], references: [id])
 }
 
 model Category {
@@ -94,55 +91,46 @@ model Category {
   createdAt DateTime           @default(now())
   updatedAt DateTime           @default(now()) @updatedAt
   products  Product[]
-  metadatas CategoryMetadata[]
+  metadata  CategoryMetadata[]
 }
 
 model CategoryMetadata {
   id         String          @id
-  categoryId Int
   name       String
+  categoryId Int
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @default(now()) @updatedAt
-  metaDataValues     MetadataValue[]
-
-  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  @@index([categoryId])
+  category   Category        @relation(fields: [categoryId], references: [id])
+  values     MetadataValue[]
 }
 
 model MetadataValue {
-  id                 String   @id
+  id                 String           @id
   label              String
   categoryMetadataId String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now()) @updatedAt
-
-  categoryMetadata CategoryMetadata @relation(fields: [categoryMetadataId], references: [id], onDelete: Cascade)
-
-  @@index([categoryMetadataId])
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now()) @updatedAt
+  categoryMetadata   CategoryMetadata @relation(fields: [categoryMetadataId], references: [id])
 }
 
 model Order {
-  id           Int         @id @default(autoincrement())
-  userId       Int
-  status       String      @default("pending") // pending, paid, shipped, delivered, canceled
-  total        Float
-  shippingCost Float       @default(0)
-  shippingDays Int         @default(0)
-  shippingZipCode String? // campo do address no momento da compra
-  shippingStreet   String? // campo do address no momento da compra
-  shippingNumber   String? // campo do address no momento da compra
-  shippingCity     String? // campo do address no momento da compra
-  shippingState    String? // campo do address no momento da compra
-  shippingCountry  String? // campo do address no momento da compra
-  shippingComplement String? // campo do address no momento da compra
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @default(now()) @updatedAt
-  orderProducts  OrderProduct[]
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
+  id                 Int            @id @default(autoincrement())
+  userId             Int
+  status             String         @default("pending")
+  total              Float
+  shippingCost       Float          @default(0)
+  shippingDays       Int            @default(0)
+  shippingZipcode    String?
+  shippingStreet     String?
+  shippingNumber     String?
+  shippingCity       String?
+  shippingState      String?
+  shippingCountry    String?
+  shippingComplement String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @default(now()) @updatedAt
+  orderItems         OrderProduct[]
+  user               User           @relation(fields: [userId], references: [id])
 }
 
 model OrderProduct {
@@ -153,10 +141,6 @@ model OrderProduct {
   price     Float
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@index([orderId])
-  @@index([productId])
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
 }

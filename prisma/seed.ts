@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma"
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -48,7 +48,7 @@ async function main() {
         prisma.banner.create({
             data: {
                 img: 'banner_promo_1.jpg',
-                link: '/categories/camisa'
+                link: '/categories/camisas'
             }
         }),
         prisma.banner.create({
