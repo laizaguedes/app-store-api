@@ -23,7 +23,7 @@ export const cartMount: RequestHandler = async (req, resp) => {
                 id: product.id,
                 label: product.label,
                 price: product.price,
-                image: product.image[0] ? getAbsoluteImageUrl(product.image[0]) : null,
+                image: product.images[0] ? getAbsoluteImageUrl(product.images[0]) : null,
             });
         }
     }
@@ -43,18 +43,21 @@ export const calculateShipping: RequestHandler = async (req, resp) => {
 
 export const finish: RequestHandler = async (req, resp) => {
     const userId = (req as any).userId;
+
     if (!userId) {
         return resp.status(401).json({ error: 'Acesso negado' });
     }
 
     const result = cartFinishSchema.safeParse(req.body);
+    
     if (!result.success) {
         return resp.status(400).json({ error: 'Carrinho inexistente' });
     }
-
+    
     const { addressId, cart } = result.data;
 
     const address = await getAddressById(userId, addressId);
+    
     if (!address) {
         return resp.status(400).json({ error: 'Endereço inválido' });
     }

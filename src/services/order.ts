@@ -38,7 +38,7 @@ export const createOrder = async({ userId, address, shippingCost, shippingDays, 
             total,
             shippingCost,
             shippingDays,
-            shippingZipCode: address.zipcode,
+            shippingZipcode: address.zipcode,
             shippingStreet: address.street,
             shippingNumber: address.number,
             shippingCity: address.city,
@@ -89,14 +89,14 @@ export const getOrderById = async (id: number, userId: number) => {
             shippingNumber: true,
             shippingState: true,
             shippingStreet: true,
-            shippingZipCode: true,
+            shippingZipcode: true,
             createdAt: true,
             orderItems: {
                 select: {
                     id: true,
                     quantity: true,
                     price: true,
-                    productId: {
+                    product: {
                         select: {
                             id: true,
                             label: true,

@@ -9,7 +9,7 @@ export const createUser = async (name: string, email: string, password: string) 
     });
     if (existing) return null;
 
-    const hashedPassword:any = hash(password, 10);
+    const hashedPassword = await hash(password, 10);
     const user = await prisma.user.create({
         data: {
             name,

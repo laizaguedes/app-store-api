@@ -47,14 +47,26 @@ async function main() {
     const banners = await Promise.all([
         prisma.banner.create({
             data: {
-                img: 'banner_promo_1.jpg',
+                img: 'banner-1.png',
                 link: '/categories/camisas'
             }
         }),
         prisma.banner.create({
             data: {
-                img: 'banner_promo_2.jpg',
-                link: '/categories/algo'
+                img: 'banner-2.png',
+                link: '/categories/camisas'
+            }
+        }),
+        prisma.banner.create({
+            data: {
+                img: 'banner-3.png',
+                link: '/categories/camisas'
+            }
+        }),
+        prisma.banner.create({
+            data: {
+                img: 'banner-4.png',
+                link: '/categories/camisas'
             }
         })
     ])
@@ -140,13 +152,25 @@ async function main() {
             prisma.productImage.create({
                 data: {
                     productId: product.id,
-                    url: `product_${product.id}_1.jpg`
+                    url: `camiseta-php.png`
                 }
             }),
             prisma.productImage.create({
                 data: {
                     productId: product.id,
-                    url: `product_${product.id}_2.jpg`
+                    url: `camiseta-node.png`
+                }
+            }),
+            prisma.productImage.create({
+                data: {
+                    productId: product.id,
+                    url: `camiseta-laravel-branca.png`
+                }
+            }),
+            prisma.productImage.create({
+                data: {
+                    productId: product.id,
+                    url: `camiseta-react-azul.png`
                 }
             })
         ])

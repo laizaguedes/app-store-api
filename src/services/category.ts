@@ -34,7 +34,7 @@ export const getCategoryMetadata = async (id: number) => {
             values: {
                 select: {
                     id: true,
-                    name: true
+                    label: true
                 }
             }
         }

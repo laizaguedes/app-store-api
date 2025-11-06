@@ -1,24 +1,31 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import cors from 'cors';
 import { routes } from './routes/main.js';
+import { stripe } from './controllers/webhook.js';
 
 const server = express();
+
+// 🌍 Libera CORS e arquivos públicos
 server.use(cors());
-server.use(express.static('public'));/* liberar a pasta pública como estática */
+server.use(express.static('public'));
 
-server.use('/webhook/stripe', express.raw({ type: 'application/json' }));
+// ⚡ Webhook do Stripe precisa do corpo cru
+server.post('/webhook/stripe', express.raw({ type: 'application/json' }), stripe);
 
-server.use(express.json());/* liberar o método de entrada e saída de dados */
+// 🧩 Agora sim, libera JSON para o resto das rotas
+server.use(express.json());
 
-server.use(routes);/* adicionar as rotas */
+// 🚀 Rotas normais
+server.use(routes);
 
-/* rota de erro */
+// ⚠️ Middleware global de erro
 server.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.log(err);
-    res.status(500).json({ error: 'Ocorreu algum erro' })
-})
+    res.status(500).json({ error: 'Ocorreu algum erro' });
+});
 
+// 🔊 Inicializa o servidor
 const port = process.env.PORT || 4000;
 server.listen(port, () => {
-    console.log('AppStore running...')
-})
+    console.log('AppStore running...');
+});

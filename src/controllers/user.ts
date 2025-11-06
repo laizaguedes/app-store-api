@@ -37,16 +37,19 @@ export const login: RequestHandler = async (req, resp) => {
 
 export const addAddress: RequestHandler = async (req, resp) => {
     const userId = (req as any).userId;
+    console.log(userId);
     if (!userId) {
         return resp.status(401).json({ error: 'Acesso negado' });
     }
 
     const result = addAddressSchema.safeParse(req.body);
+    console.log(result);
     if (!result.success) {
         return resp.status(400).json({ error: 'Dados inválidos' });
     }
 
     const address = await createAddress(userId, result.data);
+    console.log(address);
     if (!address) {
         return resp.status(400).json({ error: 'Aconteceu algum erro' });
     }

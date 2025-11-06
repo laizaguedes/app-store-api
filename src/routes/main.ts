@@ -19,7 +19,7 @@ routes.get('/banners', bannerController.getBanners);
 routes.get('/products', productController.getProducts);
 routes.get('/product/:id', productController.getOneProduct);
 routes.get('/product/:id/related', productController.getRelatedProducts);
-routes.get('/product/:slug/metadata', categoryController.getCategoryWithMetadata);
+routes.get('/category/:slug/metadata', categoryController.getCategoryWithMetadata);
 routes.post('/cart/mount', cartController.cartMount);
 routes.get('/cart/shipping', cartController.calculateShipping);
 routes.post('/user/register', userController.register);

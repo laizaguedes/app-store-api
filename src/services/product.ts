@@ -8,6 +8,8 @@ type ProductFilters = {
 }
 
 export const getAllProducts = async (filters: ProductFilters) => {
+    console.log(filters);
+    
     // Organize ORDER
     let orderBy = {};
     switch (filters.order) {
@@ -48,6 +50,8 @@ export const getAllProducts = async (filters: ProductFilters) => {
             where.AND = metaFilters;
         }
     }
+
+    console.log(where);
 
     const products = await prisma.product.findMany({
         select: {
